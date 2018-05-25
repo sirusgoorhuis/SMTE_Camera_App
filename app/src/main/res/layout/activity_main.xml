@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
         android:onClick="goToAndroidDataEncryptionPrototype"
-        android:text="Android Camera Prototype"
+        android:text="Android Data Encryption Prototype"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="79dp" />
 
