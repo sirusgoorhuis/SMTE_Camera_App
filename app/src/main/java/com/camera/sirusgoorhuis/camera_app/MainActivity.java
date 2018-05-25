@@ -17,4 +17,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, AndroidCameraPrototypeActivity.class));
     }
 
+    public void goToAndroidDataEncryptionPrototype(View view) {
+        startActivity(new Intent(MainActivity.this, AndroidDataEncryptionActivity.class));
+    }
 }
