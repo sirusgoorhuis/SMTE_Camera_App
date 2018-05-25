@@ -16,7 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AndroidCameraPrototypeActivity"></activity>
+        <activity
+            android:name=".AndroidCameraPrototypeActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
-
+    <uses-permission
+        android:name="android.name.CAMERA"/>
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>
