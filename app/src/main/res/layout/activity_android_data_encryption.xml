@@ -26,22 +26,32 @@
         android:hint="Enter encrypt password"
         app:layout_constraintTop_toBottomOf="@+id/inputText"
         tools:layout_editor_absoluteX="0dp" />
-    
+
     <TextView
         android:id="@+id/outputText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="35dp"
+        android:layout_marginTop="144dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/encBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_marginTop="192dp"
+        android:text="ENCRYPT"
+        app:layout_constraintTop_toTopOf="@+id/inputText"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/decBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        android:layout_marginTop="256dp"
+        android:text="DECRYPT"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>
