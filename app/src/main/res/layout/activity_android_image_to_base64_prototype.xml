@@ -7,7 +7,7 @@
     tools:context="com.camera.sirusgoorhuis.camera_app.AndroidImageToBase64Prototype">
 
     <Button
-        android:id="@+id/encBtn"
+        android:id="@+id/toBase64"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="212dp"
@@ -16,7 +16,7 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
-        android:id="@+id/decBtn"
+        android:id="@+id/toImage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="276dp"
@@ -37,6 +37,7 @@
         app:srcCompat="@drawable/harold" />
 
     <TextView
+        android:id="@+id/outputBase64"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="128dp"
@@ -46,5 +47,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    q
+
 </android.support.constraint.ConstraintLayout>
