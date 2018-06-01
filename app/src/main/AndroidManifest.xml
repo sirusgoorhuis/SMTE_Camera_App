@@ -17,8 +17,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AndroidCameraPrototypeActivity"
-            android:screenOrientation="landscape"></activity>
+	    android:name=".AndroidCameraPrototypeActivity"
+	    android:screenOrientation="landscape"/>
+        <activity android:name=".AndroidDataEncryptionActivity" />
+        <activity android:name=".AndroidImageToBase64Prototype"></activity>
     </application>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature
