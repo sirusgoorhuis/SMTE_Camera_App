@@ -1,5 +1,7 @@
 package com.camera.sirusgoorhuis.camera_app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -8,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 
 import javax.crypto.Cipher;
@@ -30,6 +33,7 @@ public class AndroidDataEncryptionActivity extends AppCompatActivity {
         inputPassword = (EditText) findViewById(R.id.password);
 
         outputText = (TextView) findViewById(R.id.outputText);
+
         encBtn = (Button) findViewById(R.id.encBtn);
         decBtn  = (Button) findViewById(R.id.decBtn);
 
@@ -58,6 +62,7 @@ public class AndroidDataEncryptionActivity extends AppCompatActivity {
         });
     }
 
+    // DECRIPTION
     private String decrypt(String outputString, String password) throws Exception {
         SecretKeySpec key = generateKey(password);
         Cipher c = Cipher.getInstance(AES);
@@ -68,7 +73,7 @@ public class AndroidDataEncryptionActivity extends AppCompatActivity {
         return decryptedValue;
     }
 
-
+    // ENCRYPTION
     private String encrypt(String Data, String password) throws Exception {
         SecretKeySpec key = generateKey(password);
         Cipher c = Cipher.getInstance(AES);
@@ -78,6 +83,7 @@ public class AndroidDataEncryptionActivity extends AppCompatActivity {
         return encryptedValue;
     }
 
+    // MAKING THE ENCRYPTION KEY
     private SecretKeySpec generateKey(String password) throws Exception {
         final MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] bytes = password.getBytes("UTF-8");

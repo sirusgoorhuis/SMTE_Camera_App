@@ -29,6 +29,7 @@
 
     <TextView
         android:id="@+id/outputText"
+        android:hint="Encrypted/Decrypted Text"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:layout_marginTop="144dp"
@@ -52,6 +53,5 @@
         android:text="DECRYPT"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />
-
 
 </android.support.constraint.ConstraintLayout>
