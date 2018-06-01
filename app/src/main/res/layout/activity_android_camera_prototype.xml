@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btn_snapPicture"
         android:layout_width="63dp"
         android:layout_height="48dp"
         android:layout_marginBottom="8dp"
