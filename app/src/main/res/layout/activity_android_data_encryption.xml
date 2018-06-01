@@ -42,7 +42,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="192dp"
         android:text="ENCRYPT"
-        app:layout_constraintTop_toTopOf="@+id/inputText"
+
         tools:layout_editor_absoluteX="0dp" />
 
     <Button

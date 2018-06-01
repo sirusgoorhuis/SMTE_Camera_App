@@ -20,4 +20,8 @@ public class MainActivity extends AppCompatActivity {
     public void goToAndroidDataEncryptionPrototype(View view) {
         startActivity(new Intent(MainActivity.this, AndroidDataEncryptionActivity.class));
     }
+
+//    public void goToAndroidImageToBase64Prototype(View view)  {
+//        startActivity(new Intent(MainActivity.this, AndroidImageToBase64Prototype.class));
+//    }
 }
