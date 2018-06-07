@@ -148,7 +148,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         }
     };
 
-    private void createCaptureRequest(int sensorOrientation) {
+    private void createCaptureRequest() {
         try {
             CaptureRequest.Builder captureRequest = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureRequest.addTarget(reader.getSurface());
@@ -161,7 +161,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         }
     }
 
-    private void createCaptureSession(final int sensorOrientation) {
+    private void createCaptureSession() {
         List<Surface> outputSurfaces = new LinkedList<>();
         outputSurfaces.add(reader.getSurface());
         try {
@@ -169,7 +169,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     cameraCaptureSessions = cameraCaptureSession;
-                    createCaptureRequest(sensorOrientation);
+                    createCaptureRequest();
                 }
 
                 @Override
@@ -240,7 +240,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
             }
             reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             reader.setOnImageAvailableListener(imageAvailableListener, mBackgroundHandler);
-            createCaptureSession(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION));
+            createCaptureSession();
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
