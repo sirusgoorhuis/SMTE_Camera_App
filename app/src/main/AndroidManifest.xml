@@ -19,7 +19,7 @@
         <activity
 	        android:name=".AndroidCameraPrototypeActivity"/>
         <activity android:name=".AndroidDataEncryptionActivity" />
-        <activity android:name=".AndroidImageToBase64Prototype"></activity>
+        <activity android:name=".AndroidImageToBase64Prototype" />
     </application>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature
