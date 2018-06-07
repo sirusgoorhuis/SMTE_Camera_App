@@ -5,6 +5,8 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -71,17 +73,9 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_android_camera_prototype);
-        textureView = (TextureView) findViewById(R.id.textureView);
+        textureView = findViewById(R.id.textureView);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        takePictureButton = (Button) findViewById(R.id.btn_snapPicture);
-        assert takePictureButton != null;
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePicture();
-            }
-        });
     }
 
     @Override
@@ -291,6 +285,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(AndroidCameraPrototypeActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
+            transformImage(textureView.getWidth(), textureView.getHeight());
             manager.openCamera(cameraId, stateCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -338,5 +333,25 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         Log.e(TAG, "onPause");
         stopBackgroundThread();
         super.onPause();
+    }
+
+    private void transformImage(int width, int height) {
+        if (textureView == null || imageDimension == null) {
+            return;
+        }
+        Matrix matrix = new Matrix();
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        RectF textureRectF = new RectF(0, 0, width, height);
+        RectF imageRectF = new RectF(0, 0, imageDimension.getHeight(), imageDimension.getWidth());
+        float centerX = textureRectF.centerX();
+        float centerY = textureRectF.centerY();
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            imageRectF.offset(centerX - imageRectF.centerX(), centerY - imageRectF.centerY());
+            matrix.setRectToRect(textureRectF, imageRectF, Matrix.ScaleToFit.FILL);
+            float scale = Math.max((float)width / imageDimension.getWidth(), (float)height / imageDimension.getHeight());
+            matrix.postScale(scale, scale, centerX, centerY);
+            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+        }
+        textureView.setTransform(matrix);
     }
 }
