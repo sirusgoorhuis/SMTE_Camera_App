@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,7 +67,6 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
-    private File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");;
     private ImageReader reader;
 
     @Override
@@ -143,18 +143,17 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(AndroidCameraPrototypeActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
+            Toast.makeText(AndroidCameraPrototypeActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
 
-    private void createCaptureRequest() {
+    private void createCaptureRequest(int sensorOrientation) {
         try {
             CaptureRequest.Builder captureRequest = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureRequest.addTarget(reader.getSurface());
             captureRequest.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureRequest.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
+            captureRequest.set(CaptureRequest.JPEG_ORIENTATION, 180);
             cameraCaptureSessions.capture(captureRequest.build(), captureListener, null);
         }
         catch (CameraAccessException ex) {
@@ -162,7 +161,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         }
     }
 
-    private void createCaptureSession() {
+    private void createCaptureSession(final int sensorOrientation) {
         List<Surface> outputSurfaces = new LinkedList<>();
         outputSurfaces.add(reader.getSurface());
         try {
@@ -170,7 +169,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     cameraCaptureSessions = cameraCaptureSession;
-                    createCaptureRequest();
+                    createCaptureRequest(sensorOrientation);
                 }
 
                 @Override
@@ -206,6 +205,8 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
         }
 
         private void save(byte[] bytes) throws IOException {
+            Date date = new Date();
+            File file = new File(Environment.getExternalStorageDirectory()+"/pic01 " + date.toString() + ".jpg");
             OutputStream output = null;
             try {
                 output = new FileOutputStream(file);
@@ -239,7 +240,7 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
             }
             reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             reader.setOnImageAvailableListener(imageAvailableListener, mBackgroundHandler);
-            createCaptureSession();
+            createCaptureSession(characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION));
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }

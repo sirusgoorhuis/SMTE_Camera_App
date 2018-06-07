@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-	    android:name=".AndroidCameraPrototypeActivity"/>
+	        android:name=".AndroidCameraPrototypeActivity"/>
         <activity android:name=".AndroidDataEncryptionActivity" />
         <activity android:name=".AndroidImageToBase64Prototype"></activity>
     </application>
