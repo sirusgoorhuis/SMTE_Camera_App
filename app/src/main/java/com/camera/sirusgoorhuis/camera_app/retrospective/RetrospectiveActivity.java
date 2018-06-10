@@ -1,5 +1,6 @@
 package com.camera.sirusgoorhuis.camera_app.retrospective;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ public class RetrospectiveActivity extends AppCompatActivity {
     }
 
     public void goToCamera(View view) {
+        startActivity(new Intent(RetrospectiveActivity.this, CameraActivity.class));
     }
 
     public void goToGallery(View view) {

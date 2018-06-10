@@ -1,7 +1,11 @@
 package com.camera.sirusgoorhuis.camera_app.retrospective;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -9,8 +13,11 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
 import android.media.ImageReader;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -19,13 +26,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.widget.Toast;
 
 import com.camera.sirusgoorhuis.camera_app.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
@@ -38,7 +55,8 @@ public class CameraActivity extends AppCompatActivity {
     private Size imageDimension;
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
-    private ImageReader imageReader;
+    private ImageReader reader;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +73,18 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) takePicture();
+        else if (keyCode == KeyEvent.KEYCODE_BACK) finish();
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
         startBackgroundThread();
-        if (textureView.isAvailable()); //todo: open camera
+        if (textureView.isAvailable()) openCamera();
         else textureView.setSurfaceTextureListener(surfaceTextureListener);
     }
 
@@ -110,6 +135,147 @@ public class CameraActivity extends AppCompatActivity {
         }
     };
 
+    private final CameraDevice.StateCallback cameraStateCallBack = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(@NonNull CameraDevice camera) {
+            Log.e(TAG, "onOpened");
+            cameraDevice = camera;
+            createCameraPreview();
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice camera) {
+            cameraDevice.close();
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice camera, int i) {
+            cameraDevice.close();
+            cameraDevice = null;
+        }
+    };
+
+    final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+        @Override
+        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+            super.onCaptureCompleted(session, request, result);
+            Toast.makeText(CameraActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+            createCameraPreview();
+        }
+    };
+
+    private void createCaptureRequest() {
+        try {
+            CaptureRequest.Builder captureRequest = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            captureRequest.addTarget(reader.getSurface());
+            captureRequest.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
+            captureRequest.set(CaptureRequest.JPEG_ORIENTATION, 180);
+            cameraCaptureSession.capture(captureRequest.build(), captureListener, null);
+        }
+        catch (CameraAccessException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void createCaptureSession() {
+        List<Surface> outputSurfaces = new LinkedList<>();
+        outputSurfaces.add(reader.getSurface());
+        try {
+            cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    cameraCaptureSession = session;
+                    createCaptureRequest();
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+
+                }
+            }, backgroundHandler);
+        }
+        catch (CameraAccessException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private final ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader imageReader) {
+            Image image = null;
+            try {
+                image = reader.acquireLatestImage();
+                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                byte[] bytes = new byte[buffer.capacity()];
+                buffer.get(bytes);
+                save(bytes);
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            finally {
+                if (image != null) {
+                    image.close();
+                }
+            }
+        }
+
+        private void save(byte[] bytes) throws IOException {
+            Date date = new Date();
+            File file = new File(Environment.getExternalStorageDirectory()+"/pic01 " + date.toString() + ".jpg");
+            OutputStream outputStream = null;
+            try {
+                outputStream = new FileOutputStream(file);
+                outputStream.write(bytes);
+            }
+            finally {
+                if (outputStream != null) outputStream.close();
+            }
+        }
+    };
+
+    protected void takePicture() {
+        if (cameraDevice == null) {
+            Log.e(TAG, "cameraDevice is null");
+            return;
+        }
+        CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
+        try {
+            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(cameraDevice.getId());
+            if (cameraCharacteristics != null) imageDimension = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG)[0];
+            int width = 640;
+            int height = 480;
+            if (imageDimension != null) {
+                width = imageDimension.getWidth();
+                height = imageDimension.getHeight();
+            }
+            reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+            reader.setOnImageAvailableListener(imageAvailableListener, backgroundHandler);
+            createCaptureSession();
+        }
+        catch (CameraAccessException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void transformImage(int width, int height) {
+        if (textureView == null || imageDimension == null) return;
+        Matrix matrix = new Matrix();
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        RectF textureRectF = new RectF(0,0, width, height);
+        RectF imageRectF = new RectF(0, 0, imageDimension.getHeight(), imageDimension.getWidth());
+        float centerX = textureRectF.centerX();
+        float centerY = textureRectF.centerY();
+        if (rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) {
+            imageRectF.offset(centerX - imageRectF.centerX(), centerY - imageRectF.centerY());
+            matrix.setRectToRect(textureRectF, imageRectF, Matrix.ScaleToFit.FILL);
+            float scale = Math.max((float) width / imageDimension.getWidth(), (float) height / imageDimension.getHeight());
+            matrix.postScale(scale, scale, centerX, centerY);
+            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+        }
+        textureView.setTransform(matrix);
+    }
+
     private void openCamera() {
         CameraManager cameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
         Log.e(TAG, "is camera open");
@@ -124,8 +290,8 @@ public class CameraActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(CameraActivity.this, new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
-            // todo: input statecallback
-            cameraManager.openCamera(cameraId, null, null);
+            transformImage(textureView.getWidth(), textureView.getHeight());
+            cameraManager.openCamera(cameraId, cameraStateCallBack, null);
         }
         catch (CameraAccessException ex) {
             ex.printStackTrace();

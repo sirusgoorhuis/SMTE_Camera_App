@@ -74,9 +74,8 @@ public class AndroidCameraPrototypeActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            takePicture();
-        }
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) takePicture();
+        else if (keyCode == KeyEvent.KEYCODE_BACK) finish();
         return true;
     }
 
