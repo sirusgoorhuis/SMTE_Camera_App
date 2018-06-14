@@ -1,7 +1,6 @@
 package com.camera.sirusgoorhuis.camera_app.retrospective;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -15,9 +14,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
 import android.media.ImageReader;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -32,13 +29,8 @@ import android.view.TextureView;
 import android.widget.Toast;
 
 import com.camera.sirusgoorhuis.camera_app.R;
+import com.camera.sirusgoorhuis.camera_app.retrospective.workerRunnable.ProcessPhotoRunnable;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -140,6 +132,7 @@ public class CameraActivity extends AppCompatActivity {
         public void onOpened(@NonNull CameraDevice camera) {
             Log.e(TAG, "onOpened");
             cameraDevice = camera;
+            Log.e(TAG, new Date().toString() + " start creating camera preview");
             createCameraPreview();
         }
 
@@ -160,6 +153,8 @@ public class CameraActivity extends AppCompatActivity {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
             Toast.makeText(CameraActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+
+            Log.e(TAG, new Date().toString() + " start creating camera preview");
             createCameraPreview();
         }
     };
@@ -199,38 +194,12 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private final ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
+    private final ImageReader.OnImageAvailableListener listener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader imageReader) {
-            Image image = null;
-            try {
-                image = reader.acquireLatestImage();
-                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                byte[] bytes = new byte[buffer.capacity()];
-                buffer.get(bytes);
-                save(bytes);
-            }
-            catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            finally {
-                if (image != null) {
-                    image.close();
-                }
-            }
-        }
-
-        private void save(byte[] bytes) throws IOException {
-            Date date = new Date();
-            File file = new File(Environment.getExternalStorageDirectory()+"/pic01 " + date.toString() + ".jpg");
-            OutputStream outputStream = null;
-            try {
-                outputStream = new FileOutputStream(file);
-                outputStream.write(bytes);
-            }
-            finally {
-                if (outputStream != null) outputStream.close();
-            }
+            Log.e(TAG, new Date().toString() + " start ImageProcessingThread");
+            Runnable runnable = new ProcessPhotoRunnable(reader.acquireLatestImage());
+            new Thread(runnable).start();
         }
     };
 
@@ -249,8 +218,8 @@ public class CameraActivity extends AppCompatActivity {
                 width = imageDimension.getWidth();
                 height = imageDimension.getHeight();
             }
-            reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-            reader.setOnImageAvailableListener(imageAvailableListener, backgroundHandler);
+            reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 2);
+            reader.setOnImageAvailableListener(listener, backgroundHandler);
             createCaptureSession();
         }
         catch (CameraAccessException ex) {
@@ -320,6 +289,7 @@ public class CameraActivity extends AppCompatActivity {
                     Toast.makeText(CameraActivity.this, "Configuration Change", Toast.LENGTH_SHORT).show();
                 }
             }, null);
+            Log.e(TAG, new Date().toString() + " camera preview created");
         }
         catch (CameraAccessException ex) {
             ex.printStackTrace();
