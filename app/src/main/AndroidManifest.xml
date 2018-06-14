@@ -24,10 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AndroidCameraPrototypeActivity"/>
-        <activity android:name=".AndroidDataEncryptionActivity"/>
+        <activity android:name=".AndroidCameraPrototypeActivity" />
+        <activity android:name=".AndroidDataEncryptionActivity" />
         <activity android:name=".AndroidImageToBase64Prototype" />
-        <activity android:name=".RetrospectiveActivity"></activity>
+        <activity android:name=".RetrospectiveActivity" />
+        <activity android:name=".sliderPrototype" android:screenOrientation="landscape">
+
+        </activity>
+
     </application>
 
 </manifest>
