@@ -4,6 +4,8 @@ import android.media.Image;
 import android.os.Environment;
 import android.util.Log;
 
+import com.camera.sirusgoorhuis.camera_app.retrospective.RetrospectiveActivity;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,11 +35,15 @@ public class ProcessPhotoRunnable implements Runnable {
     }
 
     private void save(byte[] bytes) throws IOException {
-        Date date = new Date();
-        File file = new File(Environment.getExternalStorageDirectory() + "/pic01 " + date.toString() + ".jpg");
+        String filePath = Environment.getExternalStorageDirectory() +
+                File.separator + "filmRoll" +
+                File.separator + RetrospectiveActivity.filmRoll.getName();
+        File file = new File(filePath);
+        if (!file.exists()) file.mkdirs();
+        File newImage = new File(filePath + "image " + image.getTimestamp() + ".jpg");
         OutputStream outputStream = null;
         try {
-            outputStream = new FileOutputStream(file);
+            outputStream = new FileOutputStream(newImage);
             outputStream.write(bytes);
         }
         finally {

@@ -194,18 +194,29 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+//    private final ImageReader.OnImageAvailableListener listener = new ImageReader.OnImageAvailableListener() {
+//        @Override
+//        public void onImageAvailable(ImageReader imageReader) {
+//            Log.e(TAG, new Date().toString() + " start ImageProcessingThread");
+//            Runnable runnable = new ProcessPhotoRunnable(reader.acquireLatestImage());
+//            new Thread(runnable).start();
+//        }
+//    };
+
     private final ImageReader.OnImageAvailableListener listener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader imageReader) {
-            Log.e(TAG, new Date().toString() + " start ImageProcessingThread");
-            Runnable runnable = new ProcessPhotoRunnable(reader.acquireLatestImage());
-            new Thread(runnable).start();
+            RetrospectiveActivity.filmRoll.addImage(imageReader.acquireLatestImage());
         }
     };
 
     protected void takePicture() {
         if (cameraDevice == null) {
             Log.e(TAG, "cameraDevice is null");
+            return;
+        }
+        if (RetrospectiveActivity.filmRoll.getImages().size() == RetrospectiveActivity.filmRoll.getExposures()) {
+            Toast.makeText(CameraActivity.this, "Your roll is full! Develop it first!", Toast.LENGTH_SHORT).show();
             return;
         }
         CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
