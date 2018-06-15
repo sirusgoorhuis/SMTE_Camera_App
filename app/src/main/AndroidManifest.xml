@@ -30,6 +30,11 @@
         <activity android:name=".retrospective.RetrospectiveActivity" />
         <activity android:name=".retrospective.CameraActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".RetrospectiveActivity" />
+        <activity android:name=".sliderPrototype" android:screenOrientation="landscape">
+
+        </activity>
+
     </application>
 
 </manifest>

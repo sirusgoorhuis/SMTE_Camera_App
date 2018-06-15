@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.camera.sirusgoorhuis.camera_app.retrospective.RetrospectiveActivity;
 
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -29,5 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToRetrospective(View view) {
         startActivity(new Intent(MainActivity.this, RetrospectiveActivity.class));
+    }
+
+    public void goToSliderPrototype(View view)
+    {
+        startActivity(new Intent(MainActivity.this, sliderPrototype.class));
     }
 }
