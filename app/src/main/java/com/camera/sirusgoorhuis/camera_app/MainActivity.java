@@ -36,4 +36,10 @@ public class MainActivity extends AppCompatActivity {
     {
         startActivity(new Intent(MainActivity.this, sliderPrototype.class));
     }
+
+    public void goToDesign(View view)
+    {
+        startActivity(new Intent(MainActivity.this, AndroidMainMenu.class));
+    }
 }
+

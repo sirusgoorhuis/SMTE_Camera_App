@@ -28,13 +28,22 @@
         <activity android:name=".AndroidDataEncryptionActivity" />
         <activity android:name=".AndroidImageToBase64Prototype" />
         <activity android:name=".retrospective.RetrospectiveActivity" />
-        <activity android:name=".retrospective.CameraActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".retrospective.CameraActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".RetrospectiveActivity" />
-        <activity android:name=".sliderPrototype" android:screenOrientation="landscape">
-
-        </activity>
-
+        <activity
+            android:name=".sliderPrototype"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".AndroidMainMenu"
+            android:screenOrientation="landscape" />
+        <activity android:name=".AndroidGallery"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".AndroidInventory"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".AndroidShop"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
