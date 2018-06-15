@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.camera.sirusgoorhuis.camera_app.retrospective.RetrospectiveActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -23,5 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToAndroidImageToBase64Prototype(View view)  {
         startActivity(new Intent(MainActivity.this, AndroidImageToBase64Prototype.class));
+    }
+
+    public void goToRetrospective(View view) {
+        startActivity(new Intent(MainActivity.this, RetrospectiveActivity.class));
     }
 }
