@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.camera.sirusgoorhuis.camera_app.AndroidInventory">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="Roboto"
+        android:text="Inventory"
+        android:textColor="@android:color/background_dark"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/mLlayoutBottomButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/button1"
+            android:background="@android:color/holo_red_light"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Load" />
+    </LinearLayout>
+    
+    <it.moondroid.coverflow.components.ui.containers.FeatureCoverFlow
+        android:id="@+id/coverFlow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:coverHeight="100dp"
+        app:coverWidth="140dp"
+        app:maxScaleFactor="1.5"
+        app:reflectionGap="0px"
+        app:rotationThreshold="0.5"
+        app:scalingThreshold="0.5"
+        app:spacing="0.6"
+        />
+
+    <TextSwitcher
+        android:id="@+id/title"
+        android:paddingBottom="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+</RelativeLayout>
