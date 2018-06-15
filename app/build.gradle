@@ -28,4 +28,6 @@ dependencies {
 
     //add library
     compile 'com.github.marcinmoskala:ArcSeekBar:0.20'
+    compile 'com.github.moondroid.coverflow:library:1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
